@@ -42,7 +42,7 @@ def get_tree_item_names(tree, trees):
 def check_answers(selected_item_names, tree_item_names, user_answers):
     correct_answers = set([name for name in selected_item_names if name in tree_item_names])
     if correct_answers == set(user_answers):
-        return f"(*^▽^*)"
+        return f"oooo(*^▽^*)oooo"
     else:
         return f"(´・ω・`)"
 
