@@ -11,7 +11,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
 def get_items_data():
-    url = "https://ddragon.leagueoflegends.com/cdn/14.5.1/data/ja_JP/item.json"
+    url = "https://ddragon.leagueoflegends.com/cdn/14.4.1/data/ja_JP/item.json"
     response = requests.get(url)
     return response.json()
 
@@ -25,7 +25,7 @@ def build_item_tree(item_id, items):
         'parents': [],
         'gold': item['gold']['total'],
         'image': item['image']['full'],
-        'image_url': f"https://ddragon.leagueoflegends.com/cdn/14.5.1/img/item/{item['image']['full']}",  # 画像URLを追加
+        'image_url': f"https://ddragon.leagueoflegends.com/cdn/14.4.1/img/item/{item['image']['full']}",  # 画像URLを追加
         'tags': item.get('tags', [])
     }
     return node
