@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>League of Legends Item Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>14.4</h1>
+        <h2>{{ item['name'] }}</h2>
+        <img src="{{ item['image_url'] }}" alt="{{ item['name'] }}" class="item-image">
+
+        <p> <strong>{{ item['name'] }}</strong> の合成先アイテムをすべて選択しなさい:</p>
+
+        <form method="post" class="quiz-form">
+            {% for item in answer_marks %}
+            <div class="form-group">
+                <input type="checkbox" id="{{ item.name }}" name="answer" value="{{ item.name }}" {% if item.checked %}checked{% endif %}>
+                <label for="{{ item.name }}">
+                    {% if submitted %}
+                    <!-- 正解か不正解かに応じてマークを表示 -->
+                    {% if item.is_correct %}
+                    <span style="color: green;">○</span>
+                    {% else %}
+                    <span style="color: red;">×</span>
+                    {% endif %}
+                    {% endif %}
+                    {{ item.name }}
+                </label><br>
+            </div>
+            {% endfor %}
+            <input type="submit" value="回答" {% if submitted %}disabled{% endif %}>
+        </form>
+
+        {% if result %}
+        <div>
+            <p>{{ result }}</p>
+            <button onclick="location.href='/next_question'">次の問題を表示する</button>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,96 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.quiz-form {
+    display: block;
+    margin-bottom: 20px;
+}
+
+
+.form-group input[type="checkbox"] {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}   
+
+.form-group {
+    display: flex;
+    align-items: center;
+    background-color: #e9ecef;
+    padding: 0;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* 横幅を100%に設定 */
+}
+
+.form-group label {
+    margin: 0;
+    font-weight: bold;
+    user-select: none;
+    font-size: 18px;
+    width: 100%; /* 横幅を100%に設定 */
+    cursor: pointer; /* カーソルをポインターに設定 */
+}
+
+.form-group:not(:last-child) {
+    margin-bottom: 3px;
+}
+
+.form-group:hover {
+    background-color: #d1d1d1; /* マウスオーバー時の背景色 */
+}
+
+.result {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="submit"] {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
