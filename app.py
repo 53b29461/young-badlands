@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
 import requests
 import random
+import os
 
 app = Flask(__name__)
 
@@ -135,4 +136,5 @@ def next_question():
     return redirect(url_for('show_data'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # 環境変数PORTからポート番号を取得
+    app.run(host='0.0.0.0', port=port, debug=True)
