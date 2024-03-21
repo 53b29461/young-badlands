@@ -35,15 +35,20 @@
         {% if result %}
         <div>
             <p>{{ result }}</p>
-            <a href="{{ tweet_url }}" target="_blank">Twitterで結果を共有</a>
             <button onclick="location.href='/next_question'">次の問題を表示する</button>
         </div>
         {% endif %}
-
         
         <div>
             <p>連続正解回数：{{ consecutive_correct_answers }}</p>
         </div>
+
+        {% if result == "(´・ω・`)" %}
+        <div>
+            <p>前問までの連続正解回数：{{ previous_consecutive_correct_answers }}</p><br><br>
+            <a href="{{ tweet_url }}" target="_blank">Twitterで結果を共有</a>
+        </div>
+        {% endif %}
         
     </div>
 </body>

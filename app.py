@@ -102,8 +102,9 @@ def show_data():
     submitted = False
     result = None
     sentakusi = 10
+    tweet_text = ""
     consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
-
+    previous_consecutive_correct_answers = session.get('previous_consecutive_correct_answers', 0)
 
     if request.method == 'POST':
         options = session.get('options')
@@ -119,8 +120,12 @@ def show_data():
             consecutive_correct_answers += 1
         else:
             consecutive_correct_answers = 0
+            previous_consecutive_correct_answers = session.get('consecutive_correct_answers', 0)
+
         session['consecutive_correct_answers'] = consecutive_correct_answers  # セッションに保存
+        session['previous_consecutive_correct_answers'] = previous_consecutive_correct_answers
     else:
+        session['previous_consecutive_correct_answers'] = 0
         data = get_items_data()
         all_items = {item_id: item for item_id, item in data['data'].items() if item.get('requiredAlly') != 'Ornn'}
         filtered_items = filter_items(all_items)
@@ -138,13 +143,16 @@ def show_data():
 
     result = session.pop('result', None)
 
-    # TwitterシェアボタンのURLを生成
-    tweet_text = f"連続正解回数: {consecutive_correct_answers}\n\n https://young-badlands-33932-1b5caf0cddb5.herokuapp.com/"
-    encoded_tweet_text = quote(tweet_text)
-    tweet_url = f"https://twitter.com/intent/tweet?text={encoded_tweet_text}"
+    if result == "(´・ω・`)":
+        tweet_text = f"連続正解回数: {previous_consecutive_correct_answers}回\n\nhttps://dashboard.heroku.com/apps/young-badlands-33932/deploy/heroku-git"
+        encoded_tweet_text = quote(tweet_text)
+        tweet_url = f"https://twitter.com/intent/tweet?text={encoded_tweet_text}"
+    else:
+        tweet_url = None
+
 
     return render_template('show_data.html', result=result, submitted=submitted, item=session.get('item_tree'),
-                           answer_marks=answer_marks, consecutive_correct_answers=consecutive_correct_answers, tweet_url=tweet_url)
+                           answer_marks=answer_marks, consecutive_correct_answers=consecutive_correct_answers, previous_consecutive_correct_answers=previous_consecutive_correct_answers,tweet_url=tweet_url)
 
 @app.route('/next_question', methods=['GET'])
 def next_question():
