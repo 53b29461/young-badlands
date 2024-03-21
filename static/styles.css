@@ -103,3 +103,9 @@ input[type="submit"]:hover {
     margin-left: 10px;
     font-size: x-small;
 }
+
+#timer {
+    font-size: 24px;
+    color: black;
+    font-weight: bold;
+}

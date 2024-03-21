@@ -51,6 +51,27 @@
             <button onclick="location.href='/next_question'">次の問題を表示する</button>
         </div>
         {% endif %}
+
+        {% if submitted == False %}
+
+        <!-- タイマー表示 -->
+        <div id="timer">30</div>
+
+        <script>
+            // タイマーの開始
+            var timeLeft = 30; // 制限時間（秒）
+            var timerId = setInterval(function() {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    document.querySelector('.quiz-form').submit(); // フォームの自動送信
+                }
+            }, 1000);
+        </script>
+
+        {% endif %}
+        
         
         <div>
             <p>連続正解回数：{{ consecutive_correct_answers }}</p>
@@ -64,7 +85,7 @@
                 <p id="inline-message" style="display: none;">Copied!</p>
             </div>
         </div>
-{% endif %}
+        {% endif %}
 
     </div>
 </body>
