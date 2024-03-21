@@ -3,6 +3,8 @@ from flask_session import Session
 import requests
 import random
 import os
+from urllib.parse import quote
+
 
 app = Flask(__name__)
 
@@ -11,7 +13,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
 def get_items_data():
-    url = "https://ddragon.leagueoflegends.com/cdn/14.5.1/data/ja_JP/item.json"
+    url = "https://ddragon.leagueoflegends.com/cdn/14.6.1/data/ja_JP/item.json"
     response = requests.get(url)
     return response.json()
 
@@ -25,7 +27,7 @@ def build_item_tree(item_id, items):
         'parents': [],
         'gold': item['gold']['total'],
         'image': item['image']['full'],
-        'image_url': f"https://ddragon.leagueoflegends.com/cdn/14.5.1/img/item/{item['image']['full']}",  # 画像URLを追加
+        'image_url': f"https://ddragon.leagueoflegends.com/cdn/14.6.1/img/item/{item['image']['full']}",  # 画像URLを追加
         'tags': item.get('tags', [])
     }
     return node
@@ -100,6 +102,8 @@ def show_data():
     submitted = False
     result = None
     sentakusi = 10
+    consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
+
 
     if request.method == 'POST':
         options = session.get('options')
@@ -109,6 +113,13 @@ def show_data():
         session['result'] = result
         submitted = True
         answer_marks = [{ 'name': name, 'is_correct': (name in answers), 'checked': (name in user_answers) } for name in options]
+        
+        # 連続正解回数の更新
+        if session['result'] == "oooo(*^▽^*)oooo":
+            consecutive_correct_answers += 1
+        else:
+            consecutive_correct_answers = 0
+        session['consecutive_correct_answers'] = consecutive_correct_answers  # セッションに保存
     else:
         data = get_items_data()
         all_items = {item_id: item for item_id, item in data['data'].items() if item.get('requiredAlly') != 'Ornn'}
@@ -127,7 +138,13 @@ def show_data():
 
     result = session.pop('result', None)
 
-    return render_template('show_data.html', result=result, submitted=submitted, item=session.get('item_tree'), answer_marks=answer_marks)
+    # TwitterシェアボタンのURLを生成
+    tweet_text = f"連続正解回数: {consecutive_correct_answers}\n\n https://young-badlands-33932-1b5caf0cddb5.herokuapp.com/"
+    encoded_tweet_text = quote(tweet_text)
+    tweet_url = f"https://twitter.com/intent/tweet?text={encoded_tweet_text}"
+
+    return render_template('show_data.html', result=result, submitted=submitted, item=session.get('item_tree'),
+                           answer_marks=answer_marks, consecutive_correct_answers=consecutive_correct_answers, tweet_url=tweet_url)
 
 @app.route('/next_question', methods=['GET'])
 def next_question():
