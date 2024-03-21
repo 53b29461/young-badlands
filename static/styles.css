@@ -94,3 +94,12 @@ input[type="submit"]:hover {
     background-color: #0056b3;
 }
 
+.share-container {
+    display: flex;
+    align-items: center;
+}
+
+#inline-message {
+    margin-left: 10px;
+    font-size: x-small;
+}

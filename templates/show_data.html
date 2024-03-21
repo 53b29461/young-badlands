@@ -59,10 +59,13 @@
         {% if result == "(´・ω・`)" %}
         <div>
             <p>前問までの連続正解回数：{{ previous_consecutive_correct_answers }}</p>
-            <button onclick="copyTextAndShowInlineMessage()">Share</button>
-            <p id="inline-message" style="display: none;"></p>
+            <div class="share-container">
+                <button onclick="copyTextAndShowInlineMessage()">Share</button>
+                <p id="inline-message" style="display: none;">Copied!</p>
+            </div>
         </div>
-        {% endif %}
+{% endif %}
+
     </div>
 </body>
 </html>
