@@ -168,7 +168,7 @@ def quiz_b():
     if request.method == 'POST':
         selected_item = session.get('selected_item')
         user_answer = int(request.form.get('price'))
-        correct_answer = int(session.get('correct_price'))
+        correct_answer = session.get('correct_price')
         submitted = True
         if user_answer == correct_answer:
             result = "正解です！"
