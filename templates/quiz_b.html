@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
     function copyTextAndShowInlineMessage() {
-        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n\n#lolanki\nwww.lolanki.com";
+        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n#lolanki\n\nhttps://www.lolanki.com/";
         navigator.clipboard.writeText(text).then(function() {
             var message = document.getElementById("inline-message");
             message.textContent = "Copied!";
