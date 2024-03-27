@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>League of Legends Anki - Patch {{ patch_version }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+    function copyTextAndShowInlineMessage() {
+        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n\n#lolanki\nwww.lolanki.com";
+        navigator.clipboard.writeText(text).then(function() {
+            var message = document.getElementById("inline-message");
+            message.textContent = "Copied!";
+            message.style.display = "block";
+            setTimeout(function() { message.style.display = "none"; }, 5000);
+        }, function(err) {
+            console.error('Async: Could not copy text: ', err);
+        });
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ patch_version }}</h1>
+        <p>{{ item['name'] }} の価格を当ててください。</p>
+        <img src="https://ddragon.leagueoflegends.com/cdn/{{ patch_version }}/img/item/{{ item['image']['full'] }}" alt="{{ item['name'] }}" class="item-image">
+        <form method="post">
+            <input type="text" name="price" placeholder="半角数字を入力" required>
+            <input type="submit" value="回答">
+        </form>
+
+        {% if result %}
+        <div>
+            <p>{{ result }}</p>
+            <button onclick="location.href='/next_question_b'">次の問題を表示する</button>
+            <a href="/" class="back-link" style="margin-left: 20px;">TOPに戻る</a>
+        </div>
+        {% endif %}
+
+        {% if submitted == False %}
+
+        <!-- タイマー表示 -->
+        <div id="timer">8</div>
+
+        <script>
+            // タイマーの開始
+            var timeLeft = 8; // 制限時間（秒）
+            var timerId = setInterval(function() {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    document.querySelector('.quiz-form').submit(); // フォームの自動送信
+                }
+            }, 1000);
+        </script>
+
+        {% endif %}
+        
+        
+        <div>
+            <p>連続正解回数：{{ consecutive_correct_answers }}</p>
+        </div>
+
+        {% if result != "正解です！" %}
+        <div>
+            <p>前問までの連続正解回数：{{ previous_consecutive_correct_answers }}</p>
+            <div class="share-container">
+                <button onclick="copyTextAndShowInlineMessage()">Share</button>
+                <p id="inline-message" style="display: none;">Copied!</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

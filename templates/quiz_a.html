@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>League of Legends Anki</title>
+    <title>League of Legends Anki - Patch {{ patch_version }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
     function copyTextAndShowInlineMessage() {
-        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n\nhttps://dashboard.heroku.com/apps/young-badlands-33932/deploy/heroku-git";
+        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n\n#lolanki\nwww.lolanki.com";
         navigator.clipboard.writeText(text).then(function() {
             var message = document.getElementById("inline-message");
             message.textContent = "Copied!";
@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>14.6</h1>
+        <h1>{{ patch_version }}</h1>
         <p>LoL Anki</p>
         <img src="{{ item['image_url'] }}" alt="{{ item['name'] }}" class="item-image">
 
@@ -48,9 +48,11 @@
         {% if result %}
         <div>
             <p>{{ result }}</p>
-            <button onclick="location.href='/next_question'">次の問題を表示する</button>
+            <button onclick="location.href='/next_question_a'">次の問題を表示する</button>
+            <a href="/" class="back-link" style="margin-left: 20px;">TOPに戻る</a>
         </div>
         {% endif %}
+
 
         {% if submitted == False %}
 
@@ -88,5 +90,6 @@
         {% endif %}
 
     </div>
+
 </body>
 </html>

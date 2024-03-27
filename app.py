@@ -12,8 +12,10 @@ app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
+patch_version = "14.6.1"
+
 def get_items_data():
-    url = "https://ddragon.leagueoflegends.com/cdn/14.6.1/data/ja_JP/item.json"
+    url = f"https://ddragon.leagueoflegends.com/cdn/{patch_version}/data/ja_JP/item.json"
     response = requests.get(url)
     return response.json()
 
@@ -27,7 +29,7 @@ def build_item_tree(item_id, items):
         'parents': [],
         'gold': item['gold']['total'],
         'image': item['image']['full'],
-        'image_url': f"https://ddragon.leagueoflegends.com/cdn/14.6.1/img/item/{item['image']['full']}",  # 画像URLを追加
+        'image_url': f"https://ddragon.leagueoflegends.com/cdn/{patch_version}/img/item/{item['image']['full']}",  # 画像URLを追加
         'tags': item.get('tags', [])
     }
     return node
@@ -97,12 +99,16 @@ def get_extended_family(item_id, trees, items):
 
     return extended_family
 
-@app.route('/', methods=['GET', 'POST'])
-def show_data():
+@app.route('/')
+def index():
+    session.clear()
+    return render_template('index.html', patch_version=patch_version)
+
+@app.route('/quiz_a', methods=['GET', 'POST'])
+def quiz_a():
     submitted = False
     result = None
     sentakusi = 10
-    tweet_text = ""
     consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
     previous_consecutive_correct_answers = session.get('previous_consecutive_correct_answers', 0)
 
@@ -143,22 +149,69 @@ def show_data():
 
     result = session.pop('result', None)
 
-    if result == "(´・ω・`)":
-        tweet_text = f"連続正解回数: {previous_consecutive_correct_answers}回\n\nhttps://dashboard.heroku.com/apps/young-badlands-33932/deploy/heroku-git"
-        encoded_tweet_text = quote(tweet_text)
-        tweet_url = f"https://twitter.com/intent/tweet?text={encoded_tweet_text}"
+    return render_template('quiz_a.html', 
+                           result=result, 
+                           submitted=submitted, 
+                           item=session.get('item_tree'),
+                           answer_marks=answer_marks, 
+                           consecutive_correct_answers=consecutive_correct_answers, 
+                           previous_consecutive_correct_answers=previous_consecutive_correct_answers,
+                           patch_version=patch_version)
+
+@app.route('/quiz_b', methods=['GET', 'POST'])
+def quiz_b():
+    submitted = False
+    result = None
+    consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
+    previous_consecutive_correct_answers = session.get('previous_consecutive_correct_answers', 0)
+
+    if request.method == 'POST':
+        selected_item = session.get('selected_item')
+        user_answer = int(request.form.get('price'))
+        correct_answer = int(session.get('correct_price'))
+        submitted = True
+        if user_answer == correct_answer:
+            result = "正解です！"
+            consecutive_correct_answers += 1
+        else:
+            result = f"不正解です。正解は {correct_answer} です。"
+            consecutive_correct_answers = 0
+            previous_consecutive_correct_answers = session.get('consecutive_correct_answers', 0)
+
+        session['result'] = result
+        session['consecutive_correct_answers'] = consecutive_correct_answers  # セッションに保存
+        session['previous_consecutive_correct_answers'] = previous_consecutive_correct_answers
     else:
-        tweet_url = None
+        session['previous_consecutive_correct_answers'] = 0
+        data = get_items_data()
+        items_dict = {item_id: item for item_id, item in data['data'].items() if item.get('requiredAlly') != 'Ornn'}
+        filtered_items_dict = filter_items(items_dict)
+        filtered_items_list = list(filtered_items_dict.values())
+        selected_item = random.choice(filtered_items_list)
+        session['selected_item'] = selected_item
+        session['correct_price'] = selected_item['gold']['total']
 
+    result = session.pop('result', None)
 
-    return render_template('show_data.html', result=result, submitted=submitted, item=session.get('item_tree'),
-                           answer_marks=answer_marks, consecutive_correct_answers=consecutive_correct_answers, previous_consecutive_correct_answers=previous_consecutive_correct_answers,tweet_url=tweet_url)
+    return render_template('quiz_b.html', 
+                           item=selected_item, 
+                           result=result, 
+                           submitted=submitted,
+                           consecutive_correct_answers=consecutive_correct_answers, 
+                           previous_consecutive_correct_answers=previous_consecutive_correct_answers,
+                           patch_version=patch_version)  
 
-@app.route('/next_question', methods=['GET'])
-def next_question():
+@app.route('/next_question_a', methods=['GET'])
+def next_question_a():
     session.pop('submitted', None)
     session.pop('result', None)
-    return redirect(url_for('show_data'))
+    return redirect(url_for('quiz_a'))
+
+@app.route('/next_question_b', methods=['GET'])
+def next_question_b():
+    session.pop('submitted', None)
+    session.pop('result', None)
+    return redirect(url_for('quiz_b'))
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # 環境変数PORTからポート番号を取得
