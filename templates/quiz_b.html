@@ -22,7 +22,7 @@
 
     <div class="container">
         <h1>{{ patch_version }}</h1>
-        <p> <strong>{{ item['name'] }}</strong> の価格を当ててください。</p>
+        <p> <strong>{{ item['name'] }}</strong> の価格を答えよ：</p>
         <img src="https://ddragon.leagueoflegends.com/cdn/{{ patch_version }}/img/item/{{ item['image']['full'] }}" alt="{{ item['name'] }}" class="item-image">
         <form method="post" autocomplete="off">
             <input type="number" name="price" placeholder="半角数字を入力" {% if submitted == False %}autofocus{% endif %}>
