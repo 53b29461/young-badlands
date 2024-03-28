@@ -150,3 +150,9 @@ input[type="submit"]:hover {
     height: 100px;
     margin: 10px;
 }
+
+footer {
+    text-align: center; 
+    font-size: small;
+    margin-top: 20px;
+}
