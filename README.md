@@ -1,2 +1,2 @@
 クイズを作りました<br>
-lolanki.com
+[lolanki.com](https://www.lolanki.com/)
