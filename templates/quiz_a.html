@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script>
     function copyTextAndShowInlineMessage() {
-        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n#lolanki\n\nhttps://www.lolanki.com/";
+        var text = "連続正解回数: {{ previous_consecutive_correct_answers }}回\n#lolanki\n#lolanki_a\n\nhttps://www.lolanki.com/";
         navigator.clipboard.writeText(text).then(function() {
             var message = document.getElementById("inline-message");
             message.textContent = "Copied!";
@@ -18,6 +18,7 @@
     </script>
 </head>
 <body>
+    <a href="/" class="back-link">TOP</a>
     <div class="container">
         <h1>{{ patch_version }}</h1>
         <p>LoL Anki</p>
@@ -48,9 +49,16 @@
         {% if result %}
         <div>
             <p>{{ result }}</p>
-            <button onclick="location.href='/next_question_a'">次の問題を表示する</button>
-            <a href="/" class="back-link" style="margin-left: 20px;">TOPに戻る</a>
+            <button id="nextQuestionButton" onclick="location.href='/next_question_a'">次の問題を表示する</button>
         </div>
+        <script>
+            // Enterキーが押されたときに「次の問題を表示する」ボタンをクリックする
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    document.getElementById('nextQuestionButton').click();
+                }
+            });
+        </script>
         {% endif %}
 
 
@@ -79,7 +87,7 @@
             <p>連続正解回数：{{ consecutive_correct_answers }}</p>
         </div>
 
-        {% if result == "(´・ω・`)" %}
+        {% if is_correct == False %}
         <div>
             <p>前問までの連続正解回数：{{ previous_consecutive_correct_answers }}</p>
             <div class="share-container">

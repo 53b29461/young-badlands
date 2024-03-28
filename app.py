@@ -108,6 +108,7 @@ def index():
 def quiz_a():
     submitted = False
     result = None
+    is_correct = None
     sentakusi = 10
     consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
     previous_consecutive_correct_answers = session.get('previous_consecutive_correct_answers', 0)
@@ -124,9 +125,11 @@ def quiz_a():
         # 連続正解回数の更新
         if session['result'] == "oooo(*^▽^*)oooo":
             consecutive_correct_answers += 1
+            is_correct = True
         else:
             consecutive_correct_answers = 0
             previous_consecutive_correct_answers = session.get('consecutive_correct_answers', 0)
+            is_correct = False
 
         session['consecutive_correct_answers'] = consecutive_correct_answers  # セッションに保存
         session['previous_consecutive_correct_answers'] = previous_consecutive_correct_answers
@@ -152,6 +155,7 @@ def quiz_a():
     return render_template('quiz_a.html', 
                            result=result, 
                            submitted=submitted, 
+                           is_correct=is_correct,
                            item=session.get('item_tree'),
                            answer_marks=answer_marks, 
                            consecutive_correct_answers=consecutive_correct_answers, 
@@ -162,21 +166,27 @@ def quiz_a():
 def quiz_b():
     submitted = False
     result = None
+    is_correct = None
     consecutive_correct_answers = session.get('consecutive_correct_answers', 0)  # 連続正解回数をセッションから取得
     previous_consecutive_correct_answers = session.get('previous_consecutive_correct_answers', 0)
 
     if request.method == 'POST':
         selected_item = session.get('selected_item')
-        user_answer = int(request.form.get('price'))
+        if not request.form.get('price'):
+            user_answer = 0
+        else:
+            user_answer = int(request.form.get('price'))
         correct_answer = session.get('correct_price')
         submitted = True
         if user_answer == correct_answer:
             result = "正解です！"
             consecutive_correct_answers += 1
+            is_correct = True
         else:
             result = f"不正解です。正解は {correct_answer} です。"
             consecutive_correct_answers = 0
             previous_consecutive_correct_answers = session.get('consecutive_correct_answers', 0)
+            is_correct = False
 
         session['result'] = result
         session['consecutive_correct_answers'] = consecutive_correct_answers  # セッションに保存
@@ -197,6 +207,7 @@ def quiz_b():
                            item=selected_item, 
                            result=result, 
                            submitted=submitted,
+                           is_correct=is_correct,
                            consecutive_correct_answers=consecutive_correct_answers, 
                            previous_consecutive_correct_answers=previous_consecutive_correct_answers,
                            patch_version=patch_version)  
