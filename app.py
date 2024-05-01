@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-patch_version = "14.8.1"
+patch_version = "14.9.1"
 
 def get_items_data():
     url = f"https://ddragon.leagueoflegends.com/cdn/{patch_version}/data/ja_JP/item.json"
