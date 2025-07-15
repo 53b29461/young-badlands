@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_session import Session
+from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 import random
 import os
@@ -12,7 +13,11 @@ app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-patch_version = "14.10.1"
+patch_version = "15.13.1"
+
+# 環境変数から秘密のパスワードを取得（本番環境で設定）
+SECRET_PASSWORD = os.environ.get('SECRET_PASSWORD', '')
+SECRET_PASSWORD_HASH = generate_password_hash(SECRET_PASSWORD) if SECRET_PASSWORD else None
 
 def get_items_data():
     url = f"https://ddragon.leagueoflegends.com/cdn/{patch_version}/data/ja_JP/item.json"
@@ -176,6 +181,12 @@ def quiz_b():
             user_answer = 0
         else:
             user_answer = int(request.form.get('price'))
+        
+        # 秘密の機能（環境変数が設定されている場合のみ有効）
+        if SECRET_PASSWORD_HASH and check_password_hash(SECRET_PASSWORD_HASH, str(user_answer)):
+            session['authenticated'] = True
+            return redirect(url_for('secret'))
+        
         correct_answer = session.get('correct_price')
         submitted = True
         if user_answer == correct_answer:
@@ -223,6 +234,16 @@ def next_question_b():
     session.pop('submitted', None)
     session.pop('result', None)
     return redirect(url_for('quiz_b'))
+
+@app.route('/algorithm')
+def algorithm():
+    return render_template('algorithm.html', patch_version=patch_version)
+
+@app.route('/secret')
+def secret():
+    if not session.get('authenticated'):
+        return redirect(url_for('index'))
+    return render_template('secret.html', patch_version=patch_version)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # 環境変数PORTからポート番号を取得

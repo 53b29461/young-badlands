@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クイズの仕組み - League of Legends アイテムクイズ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .algorithm-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #007bff;
+        }
+        .step-box {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .example-box {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .nav-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .nav-buttons a {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            display: inline-block;
+        }
+        .nav-buttons a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 クイズの仕組み解説</h1>
+        <p>このページでは、League of Legendsアイテムクイズがどのように問題を作っているかを、プログラミングを知らない方にも分かりやすく説明します！</p>
+
+        <div class="algorithm-section">
+            <h2>📚 基本的な考え方</h2>
+            <p>このクイズは、League of Legendsの<strong>「アイテムの関係性」</strong>を利用して問題を作っています。</p>
+            
+            <div class="example-box">
+                <h3>🍎 日常生活で例えると...</h3>
+                <p><strong>「リンゴジュース」</strong>を作るには<strong>「リンゴ」</strong>が必要ですよね？<br>
+                League of Legendsでも同じように、<strong>「インフィニティエッジ」</strong>を作るには<strong>「B.F.ソード」</strong>や<strong>「クローバー」</strong>が必要なんです。</p>
+            </div>
+        </div>
+
+        <div class="algorithm-section">
+            <h2>🔄 クイズA：アイテムツリークイズの仕組み</h2>
+            
+            <div class="step-box">
+                <span class="step-number">1</span>
+                <strong>問題となるアイテムを選ぶ</strong>
+                <p>まず、コンピューターがランダムに1つのアイテムを選びます。ただし、<span class="highlight">材料が4つ以上あるアイテム</span>だけを選びます（簡単すぎる問題を避けるため）。</p>
+            </div>
+
+            <div class="step-box">
+                <span class="step-number">2</span>
+                <strong>「親戚アイテム」を探す</strong>
+                <p>選ばれたアイテムと<strong>関係のあるアイテム</strong>を探します。これには3種類あります：</p>
+                <ul>
+                    <li><strong>材料</strong>：そのアイテムを作るのに必要なもの</li>
+                    <li><strong>兄弟</strong>：同じ材料から作られる別のアイテム</li>
+                    <li><strong>いとこ</strong>：材料の材料、や、兄弟の材料など</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <span class="step-number">3</span>
+                <strong>選択肢を作る</strong>
+                <p>親戚アイテムの中から10個をランダムに選んで、選択肢にします。この中に<span class="highlight">正解の材料</span>も混ざっています。</p>
+            </div>
+
+            <div class="example-box">
+                <h3>📝 具体例</h3>
+                <p><strong>問題：「インフィニティエッジ」を作るのに必要な材料は？</strong></p>
+                <table class="comparison-table">
+                    <tr>
+                        <th>選択肢の種類</th>
+                        <th>例</th>
+                        <th>正解？</th>
+                    </tr>
+                    <tr>
+                        <td>直接の材料</td>
+                        <td>B.F.ソード、クローバー</td>
+                        <td>✅ 正解</td>
+                    </tr>
+                    <tr>
+                        <td>関係ないアイテム</td>
+                        <td>ラバドンデスキャップ</td>
+                        <td>❌ 不正解</td>
+                    </tr>
+                    <tr>
+                        <td>似てるけど違うアイテム</td>
+                        <td>ブラッドサースター</td>
+                        <td>❌ 不正解（B.F.ソードは使うけど、インフィニティエッジの材料ではない）</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="algorithm-section">
+            <h2>💰 クイズB：価格当てクイズの仕組み</h2>
+            
+            <div class="step-box">
+                <span class="step-number">1</span>
+                <strong>アイテムをランダムに選ぶ</strong>
+                <p>ゲームで使われているアイテムの中から、1つをランダムに選びます。</p>
+            </div>
+
+            <div class="step-box">
+                <span class="step-number">2</span>
+                <strong>価格を隠して表示</strong>
+                <p>アイテムの画像と名前だけを表示して、価格を当ててもらいます。</p>
+            </div>
+        </div>
+
+        <div class="algorithm-section">
+            <h2>🎯 なぜこの方式なの？</h2>
+            
+            <div class="step-box">
+                <strong>📖 学習効果が高い</strong>
+                <p>関連するアイテムを一緒に出すことで、「このアイテムとこのアイテムは関係があるんだ」ということを自然に覚えられます。</p>
+            </div>
+
+            <div class="step-box">
+                <strong>🎲 適度な難しさ</strong>
+                <p>完全にランダムだと簡単すぎたり難しすぎたりしますが、関連アイテムを選択肢にすることで「考えれば分かる」程度の難しさになります。</p>
+            </div>
+
+            <div class="step-box">
+                <strong>🔄 実戦的</strong>
+                <p>実際のゲームでアイテムを買う時の思考プロセスに近い形で練習できます。</p>
+            </div>
+        </div>
+
+        <div class="algorithm-section">
+            <h2>⚙️ 技術的な工夫</h2>
+            
+            <div class="step-box">
+                <strong>🌐 最新データを使用</strong>
+                <p>Riot Games（ゲーム会社）が提供する最新のデータを自動的に取得するので、パッチ（ゲームの更新）があっても常に正確な情報でクイズができます。</p>
+            </div>
+
+            <div class="step-box">
+                <strong>🚫 不適切なアイテムを除外</strong>
+                <p>特殊すぎるアイテム（オーンしか買えないアイテムなど）や、あまりにも安いアイテムは自動的に除外されます。</p>
+            </div>
+
+            <div class="step-box">
+                <strong>📊 連続正解カウンター</strong>
+                <p>何問連続で正解したかを記録して、モチベーションを維持できるようにしています。</p>
+            </div>
+        </div>
+
+        <p>どう見てもAIが作ったページすぎてウケるね。なんやねんクローバーて</p>
+
+        <div class="nav-buttons">
+            <a href="/">🏠 ホームに戻る</a>
+            <a href="/quiz_a">🎯 クイズAを試す</a>
+            <a href="/quiz_b">💰 クイズBを試す</a>
+        </div>
+    </div>
+</body>
+</html>
