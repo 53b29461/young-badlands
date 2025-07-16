@@ -176,8 +176,6 @@ def quiz_b():
             user_answer = 0
         else:
             user_answer = int(request.form.get('price'))
-        
-        
         correct_answer = session.get('correct_price')
         submitted = True
         if user_answer == correct_answer:
@@ -225,10 +223,6 @@ def next_question_b():
     session.pop('submitted', None)
     session.pop('result', None)
     return redirect(url_for('quiz_b'))
-
-@app.route('/algorithm')
-def algorithm():
-    return render_template('algorithm.html', patch_version=patch_version)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # 環境変数PORTからポート番号を取得
